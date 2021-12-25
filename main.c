@@ -1,111 +1,147 @@
 #include <stdio.h>
-typedef struct GRAPH_NODE_ *pnode;
+#include <stdlib.h>
 
-     typedef struct edge_
-    {
-        int weight;
-        pnode dest;
-        struct edge_ *next;
-    } edge, *pedge;
-        
-    
-    typedef struct GRAPH_NODE_{
-        int id;
-        pedge edges;
-        struct GRAPH_NODE_ *next;
-    }node, *pnode;
 
-void build_graph_cmd(pnode *head)
-{
-    int num ;
-    if (scanf("%d", &num) != 0)
-    {
-    *head = (pnode)malloc(num * sizeof(node));
-    if (*head == NULL)
-    {
-        printf("error\n");
-    }
-    }
-}
+typedef struct GRAPH_NODE *pnode;
+
+typedef struct GRAPH_EDGE{
+    int weight;
+    pnode dest;
+    struct GRAPH_EDGE *next;
+} edge, *pEdge;
+
+typedef struct GRAPH_NODE{
+    int id;
+    pEdge edges;
+    struct GRAPH_NODE * next;
+} node , *pnode;
+
 pnode find_node(int id, pnode head)
 {
-    while ((head->next !=NULL))
+    while(head!=NULL)
     {
-        if(head->id == id)
+        if(head->id==id)
         {
             return head;
         }
         head = head->next;
     }
     return NULL;
-
 }
 
-pnode add_node( pnode *head)
+
+
+pnode addNode (pnode *head)
+
+// node =Null -> bulid graph ->(keyListener)get(n) -> addNod ->(keyListener) ('n' [addNode],'int' [function addEdge(int,int)])
 {
     int id;
-    if (scanf("%d", &id) == 0)
+    printf("please enter node id");
+    if(scanf("%d",&id)==0)
     {
-        printf("null");
+        printf("type integer value");
+        return NULL;
     }
-    pnode pn = find_node(id, *head);
-    if (pn == NULL)
+    pnode ptn= find_node(id, *head);
+    if(ptn==NULL)
     {
-    pn = (pnode) malloc (sizeof(node));
-    if(pn!=NULL){
-    pn->id = id;
-    pn->next = head;
-    head = &pn;
-    return pn;
+        ptn = (pnode) malloc(sizeof(node));
+        if(ptn==NULL)
+        {
+            printf("eroor");
+            return ptn;
+        }
+        ptn->id =id;
+        ptn->next = *head;
+        *head =  ptn;
     }
-    }
+    return ptn;
+}
+
+
+void insert_edge(pEdge *head,pnode dest, int w)
+{
+        pEdge pte;
+        pte = (pEdge) malloc(sizeof(edge));
+        pte->dest = dest;
+        pte->weight = w;
+        pte->next = *head;
+        *head = pte;
+    
+    return;
+}
+void get_edge(pnode *head, pnode* src)
+{
+  printf("dest id: ");
+  pnode d = addNode(head);
+  int w;
+  printf("please enter w: ");
+        if (scanf("%d",&w )!=0)
+        {
+            pEdge p = (*src)->edges;
+           
+            insert_edge(&p,d,w);
+            (*src)->edges = p;
+
+        }
 }
 
 
 
 
-int main(int argc, char const *argv[])
+
+
+void build_graph_cmd(pnode *pn)
+/// pn->id ||(*pn).id || pn =other_pn
 {
-    node n= {NULL,NULL,NULL};
-    pnode pn = &n;
+    // int v;
+    // printf("please enter1:");
+
+    // scanf("%d", &v);
+    int w;
+    char x;
+    printf("please enter n:");
+    scanf("%c",&x);
+    if (x == 'n')
+    {
+       
+        pnode src = addNode(pn);
+        pnode src2 = addNode(pn);
+        get_edge(pn,&src);
+        get_edge(pn,&src);
+        get_edge(pn,&src2);
+        get_edge(pn,&src2);
+
+
+        
+    }
+   
+    if(*pn==NULL)
+    {
+        printf("not good");
+    }
+}
+
+
+int main()
+{
+    
+    pnode pn = NULL;
     build_graph_cmd(&pn);
-    add_node(&pn);
-    add_node(&pn);
-    add_node(&pn);
-    printf("%d", pn->id);
-    free(pn);
-    // if(pn !=NULL)
-    // {
-    //     printf("yayy\n");
-    //     free(pn);
-    //     printf("%p", pn->id);
-    // }
-    // if(pn ==NULL)
-    // {
-    //     printf("yofi!");
-    // }
-
-    // node n1;
-    // node n2;
-    // n1.id = 3;
-    // n2.id = 4;
-    // edge e;
-    // e.weight = 5;
-    // e.dest = &n2;
-    // e.next = NULL;
-    // n1.edges = &e;
+    // addNode(&pn);
+    // addNode(&pn);
+    // addNode(&pn);
+    // addNode(&pn);
+    while (pn){
+    if (pn->edges!=NULL)
+    {
+        printf("%d ,", pn->id);
+        printf("%d",pn->edges->weight);
+    }
+    pn = pn->next;
+    }
     
-    // printf("%d", n1.edges->weight);
-
     
+    // printf("%d", pn->next->id);
     return 0;
 }
-
-
-
-
-
-    
-
-
-
