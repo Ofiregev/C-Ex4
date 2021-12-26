@@ -28,6 +28,10 @@ void removeEdge(pEdge *prev);
 
 void insert_edge(pEdge *head,pnode dest, int w);
 void get_edge(pnode *head, pnode* src);
+int findWbySrc(pnode *head,int src,int dest);
+int findByid(pEdge * head,int dest);
+
+
 
 pnode find_node(int id, pnode head);
 pnode addNOdeB (pnode *head);

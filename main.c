@@ -23,8 +23,8 @@ void build_graph_cmd(pnode *pn)
         get_edge(pn,&src2);//3
         get_edge(pn,&src2);//4
         get_edge(pn,&src2);//1
-        removeALLNodes(pn);
-
+        int w = findWbySrc(pn,src1->id,src2->id);
+        printf("%d\n",w);
         
 
     //     pnode p = *pn;

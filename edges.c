@@ -84,3 +84,33 @@ void removeByid(pEdge * head,int dest)
 
 
 }
+int findByid(pEdge * head,int dest)
+{
+    if((*head)== NULL)
+    {
+        return -1;
+    }
+    pEdge p = (*head);
+    
+    while (p)
+    {
+        if(p->dest->id == dest)
+        {
+            return (*head)->weight;
+        }
+        p = p->next;
+    }
+    return NULL;
+}
+int findWbySrc(pnode *head,int src,int dest)
+{
+    pnode ptn= find_node(src, *head);
+    if(ptn !=NULL)
+    {
+        pEdge edgeArr = ptn->edges;
+        int w = findByid(&edgeArr,dest);
+        return w;
+    }
+    return NULL;
+    
+}
