@@ -36,6 +36,7 @@ pnode addNode (pnode *head);
 void removeNodeByid(pnode * head,int id);
 void deleteFirstNode(pnode *head);
 void removeNode(pnode *prev);
+void removeALLNodes(pnode *head);
 
 
 

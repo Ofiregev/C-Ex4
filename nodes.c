@@ -69,6 +69,15 @@ pnode addNode (pnode *head)
     }
     return ptn;
 }
+
+void removeALLNodes(pnode *head)
+{
+    while(*head)
+    {
+        deleteFirstNode(head);
+    }
+}
+
 void removeNodeByid(pnode * head,int id)
 {
     if((*head)== NULL)

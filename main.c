@@ -23,7 +23,7 @@ void build_graph_cmd(pnode *pn)
         get_edge(pn,&src2);//3
         get_edge(pn,&src2);//4
         get_edge(pn,&src2);//1
-        removeNodeByid(pn,src2->id);
+        removeALLNodes(pn);
 
         
 
@@ -61,6 +61,7 @@ int main()
         // pn->edges = pn->edges->next;
         pn = pn->next;
     }
+    printf("It worked!");
     
     
     
