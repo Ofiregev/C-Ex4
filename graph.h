@@ -1,3 +1,7 @@
+
+
+
+
 #ifndef GRAPH_
 #define GRAPH_
 
@@ -28,6 +32,13 @@ void get_edge(pnode *head, pnode* src);
 pnode find_node(int id, pnode head);
 pnode addNOdeB (pnode *head);
 pnode addNode (pnode *head);
+
+void removeNodeByid(pnode * head,int id);
+void deleteFirstNode(pnode *head);
+void removeNode(pnode *prev);
+
+
+
 
 void build_graph_cmd(pnode *pn);
 
