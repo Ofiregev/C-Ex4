@@ -46,6 +46,11 @@ void removeALLNodes(pnode *head);
 
 
 void build_graph_cmd(pnode *pn);
+void bellman_ford(int **arr,int n);
+void shortestPath(int i, int j);
+int createMatrix(pnode *head);
+
+
 
 
 

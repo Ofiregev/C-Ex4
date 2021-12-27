@@ -100,7 +100,7 @@ int findByid(pEdge * head,int dest)
         }
         p = p->next;
     }
-    return NULL;
+    return -1;
 }
 int findWbySrc(pnode *head,int src,int dest)
 {
@@ -111,6 +111,6 @@ int findWbySrc(pnode *head,int src,int dest)
         int w = findByid(&edgeArr,dest);
         return w;
     }
-    return NULL;
+    return -1;
     
 }
