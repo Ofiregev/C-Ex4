@@ -13,7 +13,7 @@ typedef struct GRAPH_EDGE{
     int weight;
     pnode dest;
     struct GRAPH_EDGE *next;
-} edge, *pEdge;
+} edge, *pEdge,*pedge;
 
 typedef struct GRAPH_NODE{
     int id;
@@ -21,11 +21,11 @@ typedef struct GRAPH_NODE{
     struct GRAPH_NODE * next;
 } node , *pnode;
 
-typedef struct DN_
-{
+typedef struct DN_{
     int node_id;
-    int node_w;
-    int visited;
+    int w;
+    int visit;
+    struct DN_* next;
 }d_node, *p_d_node;
 
 
@@ -35,14 +35,14 @@ void removeALLedges(pEdge *head);
 void removeEdge(pEdge *prev);
 
 void insert_edge(pEdge *head,pnode dest, int w);
-void get_edge(pnode *head, pnode* src);
+void get_edge_place(pnode *head, pnode* src);
 int findWbySrc(pnode *head,int src,int dest);
 int findByid(pEdge * head,int dest);
 
 
 
 pnode find_node(int id, pnode head);
-pnode addNOdeB (pnode *head);
+pnode addNOdeB (pnode *head);//We need to check this function
 pnode addNode (pnode *head);
 
 void removeNodeByid(pnode * head,int id);
@@ -50,22 +50,17 @@ void deleteFirstNode(pnode *head);
 void removeNode(pnode *prev);
 void removeALLNodes(pnode *head);
 
-
-
-
 void build_graph_cmd(pnode *pn);
-void bellman_ford(int **arr,int n);
-void shortestPath(int i, int j);
-int createMatrix(pnode *head);
-void buildMatrix(pnode *head);
 
-d_node* Dijkstra(pnode *head, pnode src);
-void relax(pnode *head, p_d_node dis,int src, int nei);
-int disByid(p_d_node head, int id);
-p_d_node pdnByid(p_d_node head, int id);
-void sort(p_d_node dis,int size);
-int count_nodes(pnode *head);
 
+void make_D(p_d_node * f, pnode * head);
+void Dijk (pnode* head, int sr, p_d_node* f);
+int short_path(pnode* head, int src, int dst);
+p_d_node find_d_by_id(p_d_node f, int id);
+p_d_node find_min(p_d_node f);
+void make_D(p_d_node * f , pnode * head);
+void add_d(p_d_node * f , pnode p);
+int countNOdes (pnode* head);
 
 
 

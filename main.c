@@ -1,164 +1,121 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "graph.h"
-#define maxint 10000
+#define inf 10000
 
-d_node* Dijkstra(pnode *head, pnode src)
+int countNOdes (pnode* head)//This function count how mant nodes we have in the graph
 {
-    int sum_nodes = count_nodes(head);
-    printf("%d",sum_nodes);
-    p_d_node distance = (p_d_node)malloc(sizeof(d_node) * sum_nodes);
     pnode p = *head;
-    int i = 0;
-    while (p)
+    int count =0;
+    while(p)
     {
-        if(p->id == src->id)
-        {
-            distance[i].node_id = (p)->id;
-            distance[i].node_w= 0;
-            distance[i].visited = 0;
-            p=p->next;
-            i++;
-            continue;
-        }
-        distance[i].node_id = (p)->id;
-        distance[i].node_w = maxint;
-        distance[i].visited = 0;
-        i++;
-        p = (p)->next;
+        count++;
+        p = p->next;
     }
-    printDist(distance);
-    while (distance[0].visited!=1)
-    {
-        //     pnode src0 = addNode(pn); //0
-        // pnode src1 = addNode(pn); //1
-        // pnode src2 = addNode(pn); //2
-        // pnode src3 = addNode(pn); //3
-        // get_edge(pn, &src0); //1->1
-        // get_edge(pn, &src0); //2->1
-        // get_edge(pn, &src1); //2->2
-        // get_edge(pn, &src2); //3->6
-        // get_edge(pn, &src3); //0->5
-    
-        sort(distance, sum_nodes);
-        // printDist(distance);
-        pnode v = find_node((distance)->node_id ,*head);
-        distance[0].visited = 1;
-        if((v->edges)== NULL)
-        {
-            
-        }else
-        {
-        pEdge e = v->edges;
-        while (e)
-        {
-            relax(head,distance,v->id,e->dest->id);
-            e = e->next;
-        }
-        }
-        // printDist(distance);
-    }
-    // printf("%d",disByid(distance,3));
-    return distance;
+    return count;
 }
-void printDist(p_d_node head)
+void add_d(p_d_node * f , pnode p)//This function add new dijkstra node to the list of the algorithm
 {
-    p_d_node n =head;
-    while (head)
-    {
-        printf("%d__",head->node_w);
-        head = head +sizeof(d_node);
-    }
-    printf("-----------"); 
+    p_d_node d =(p_d_node) malloc(sizeof(p_d_node));
+        if (d == NULL)
+        {
+            printf("eroor");
+        }
+    d->w =inf;
+    d->node_id = p->id;
+    d->visit =0;
+    d->next =(*f);
+    (*f) = d;
 }
-
-
-void relax(pnode *head, p_d_node dis,int src, int nei)
+void make_D(p_d_node * f , pnode * head)//This function create the list for the dijkstra algorithm
 {
-    pnode n = find_node(src , *head);
-    pEdge e = n->edges;
-// findByid(&e,nei)
-    int curr_w = disByid(dis,src) +findWbySrc(head,src,nei) ;
-
-    if(disByid(dis,nei) > curr_w)
+    int count= countNOdes(head);
+    pnode p = *head;
+    *f = NULL;
+    p_d_node d = *f;
+        while (p)
     {
-        p_d_node g=  pdnByid(dis,nei);
-        g->node_w = curr_w;
-        g->visited = 1;
+        add_d(f, p);
+        p=p->next;
     }
 }
-
-int disByid(p_d_node head, int id)
+p_d_node find_min(p_d_node f)//This function run all over the list of d_node and return the one with the minimum weight
 {
-    p_d_node p = head;
-    while (p)
+    int min = inf;
+    p_d_node adress = NULL;
+    while(f)
     {
-        if(p->node_id == id)
+        if(f->visit==0)
         {
-            printf("%d\n", p->node_w);
-            return p->node_w;
+            if(f->w < min)
+            {
+                min = f->w;
+                adress =f;
+            }
         }
-        p++;
+        f =f->next;
     }
-    return -1;
+    return adress; 
+    /// if the adress is Null so we are Done doing Dijkstera.
 }
-p_d_node pdnByid(p_d_node head, int id)
+p_d_node find_d_by_id(p_d_node f, int id)//This function run on the list of the d_nodes and return the specific node
 {
-    p_d_node p = head;
-    while (p)
+    while(f)
     {
-        if(p->node_id == id)
+        if(f->node_id==id)
         {
-            return p;
+            return f;
         }
-        p++;
+        f = f->next;
     }
     return NULL;
 }
 
-
-
-void sort(p_d_node dis,int size)
+void Dijk (pnode* head, int sr, p_d_node* f)//Dijksra algorithm- find the shortests path from a specific node in the graph
 {
-    int vis = 0;
-    p_d_node dist = dis;
-    for (int j = 0;j<size;j++)
+
+    p_d_node prev =find_d_by_id((*f), sr); 
+    // setting the src to be visited and w=0;
+    if(prev==NULL)
     {
-        if ((dist+j)->visited == 1)
-        {
-            d_node temp = dist[j];
-            dist[j] = dist[size-1-vis];
-            dist[size-1-vis] = temp;
-            vis++;
-        }
+       return; 
     }
-    for (int i = 0;i<size-vis;i++)
+    prev->visit =1;
+    prev->w = 0;
+    while(prev!=NULL)  /// if there is more nodes we didnt iterat 
     {
-        for(int j = 0;j<size-vis-1-i;j++)
+        pedge e = find_node(prev->node_id, *head)->edges;
+
+        /// the list of this node edges
+        while(e)
+        // there is more egdes to this node
         {
-            if((dist+j)->node_w >(dist+j+1)->node_w)
+            p_d_node temp = find_d_by_id((*f),e->dest->id);
+            // find the adress of this struct and check the short path there.
+            if(temp->w > ((e->weight) +  (prev->w)))
             {
-                d_node temp = dist[j];
-                dist[j] = dist[j+1];
-                dist[j+1] =temp;
+                temp->w =((e->weight) +  (prev->w));
             }
+            e =e->next;
         }
+        prev->visit =1;
+        prev = find_min(*f);
+        /// iteration on the nodes untill we get everyone.
     }
 }
-int count_nodes(pnode *head)
+int short_path(pnode* head, int src, int dst)//This function return the shortest path between two nodes
 {
-    pnode p = *head;
-    int count = 0;
-    while (p)
-    {
-        count ++;
-        p = (p)->next;
-    }
-    return count;
-
-}
+    p_d_node d =NULL;
+    make_D(&d,head);
+    Dijk(head, src, &d);
+    int min_w =((find_d_by_id(d, dst))->w);
+    printf("%d",min_w);
+    p_t_f q = free_dn_list;
+    q(d);
+    return min_w;
     
-pnode find_node(int id, pnode head)
+} 
+pnode find_node(int id, pnode head)//This function find node by id in the graph
 {
     while (head != NULL)
     {
@@ -171,7 +128,7 @@ pnode find_node(int id, pnode head)
     return NULL;
 }
 
-pnode addNOdeB(pnode *head)
+pnode addNOdeB(pnode *head)//We need to check this function
 {
     int id;
     printf("please enter node id");
@@ -196,7 +153,7 @@ pnode addNOdeB(pnode *head)
     return ptn;
 }
 
-pnode addNode(pnode *head)
+pnode addNode(pnode *head)//This function adding new node to the graph (The new node become the head of the linked list)
 
 // node =Null -> bulid graph ->(keyListener)get(n) -> addNod ->(keyListener) ('n' [addNode],'int' [function addEdge(int,int)])
 {
@@ -231,7 +188,7 @@ void removeALLNodes(pnode *head)
     }
 }
 
-void removeNodeByid(pnode *head, int id)
+void removeNodeByid(pnode *head, int id)//This function delete node by id
 {
     if ((*head) == NULL)
     {
@@ -255,7 +212,7 @@ void removeNodeByid(pnode *head, int id)
         prev = prev->next;
     }
 }
-void deleteFirstNode(pnode *head)
+void deleteFirstNode(pnode *head)//this function delete the first node in the list and free the memory of the node
 {
     if (!*head)
         return;
@@ -264,25 +221,30 @@ void deleteFirstNode(pnode *head)
     free(p);
 }
 
-void removeNode(pnode *prev)
+void removeNode(pnode *prev)//Thid function remove a regular node (not the first)
 {
     pnode p = (*prev)->next;
     (*prev)->next = (*prev)->next->next;
     free(p);
 }
 
-void insert_edge(pEdge *head, pnode dest, int w)
+void insert_edge(pEdge *head, pnode dest, int w)//This function insert new node to the linked list
 {
     pEdge pte;
+    if((pEdge)malloc(sizeof(edge))==NULL)
+    {
+        printf("error");
+    }else{
     pte = (pEdge)malloc(sizeof(edge));
     pte->dest = dest;
     pte->weight = w;
     pte->next = *head;
     *head = pte;
+    }
 
     return;
 }
-void get_edge(pnode *head, pnode *src)
+void get_edge_place(pnode *head, pnode *src)//This function get the place which we node to insert in edge
 {
     printf("dest id: ");
     pnode d = addNode(head);
@@ -345,11 +307,11 @@ void removeByid(pEdge *head, int dest)
         prev = prev->next;
     }
 }
-int findByid(pEdge *head, int dest)
+int findByid(pEdge *head, int dest)//This function gets the pointer to the list of edges and the destenation id and return the w of the edge
 {
     if ((*head) == NULL)
     {
-        return maxint;
+        return inf;
     }
     pEdge p = (*head);
 
@@ -363,7 +325,7 @@ int findByid(pEdge *head, int dest)
     }
     return -1;
 }
-int findWbySrc(pnode *head, int src, int dest)
+int findWbySrc(pnode *head, int src, int dest)//This function gets src id and dest id and return the weight of the edge between them,return -1 if there isnt an edge
 {
     pnode ptn = find_node(src, *head);
     if (ptn != NULL)
@@ -398,8 +360,11 @@ void build_graph_cmd(pnode *pn)
         get_edge(pn, &src1); //2->2
         get_edge(pn, &src2); //3->6
         get_edge(pn, &src3); //0->5
-    
-        Dijkstra(pn,src0);
+        p_d_node d = NULL;
+        make_D(&d,pn);
+        short_path(pn,src0->id,2);
+        p_t_f d = free_dn_list;
+        
         // while (*pn)
         // {
         //     printf("%d", (*pn)->id);
@@ -430,41 +395,35 @@ void build_graph_cmd(pnode *pn)
         }
     }
 }
-int createMatrix(pnode *head)
-{
-    pnode p = *head;
-    int sum = 0;
-    while (p)
-    {
-        sum++;
-        p = p->next;
-    }
-    int **matrix = (int **)malloc(sum * sizeof(int *));
-    for (int i = 0; i < sum; i++)
-        matrix[i] = (int *)malloc(sum * sizeof(int));
+typedef void(*p_t_f)(void*);
 
-    for (int i = 0; i < sum; i++)
+void free_graph(pnode * head)
+{
+    pnode  t = *head;
+    while (*head)
     {
-        for (int j = 0; j < sum; j++)
-        {
-            if (i == j)
-            {
-                matrix[i][j] = 0;
-            }
-            int w = findWbySrc(head, i, j);
-            if (w != -1)
-            {
-                matrix[i][j] = findWbySrc(head, i, j);
-            }
-            else
-            {
-                matrix[i][j] = 1000;
-            }
-        }
+        removeALLedges((*head)->edges);
+        t = head;
+        *head = (*head)->next;
+        free(t);
     }
-    printf("%d----", matrix[1][2]);
-    // bellman_ford(matrix,1);
+    free(head);
 }
+void free_dn_list(p_d_node * head)
+{
+    p_d_node  t = *head;
+    while (*head)
+    {
+        t = head;
+        *head = (*head)->next;
+        free(t);
+    }
+    free(head);
+}
+
+
+
+
 
 int main()
 {
@@ -483,6 +442,8 @@ int main()
         // pn->edges = pn->edges->next;
         pn = pn->next;
     }
+    p_t_f d = free_graph;
+    d(pn);
     printf("It worked!");
 
     // printf("%d", pn->next->id);
