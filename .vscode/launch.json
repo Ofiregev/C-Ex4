@@ -9,7 +9,7 @@
         ""
       ],
       "stopAtEntry": false,
-      "cwd": "/home/ofiregev/C-Ex4/main",
+      "cwd": "/home/ofiregev/C-Ex4",
       "environment": [],
       "program": "/home/ofiregev/C-Ex4/build/Debug/outDebug",
       "internalConsoleOptions": "openOnSessionStart",
