@@ -2,115 +2,95 @@
 #include <stdlib.h>
 #include "graph.h"
 
-
-
-void insert_edge(pEdge *head,pnode dest, int w)
+pedge add_edge(pnode* head, pnode *src)
 {
-        pEdge pte;
-        pte = (pEdge) malloc(sizeof(edge));
-        pte->dest = dest;
-        pte->weight = w;
-        pte->next = *head;
-        *head = pte;
-    
-    return;
-}
-void get_edge(pnode *head, pnode* src)
-{
-  printf("dest id: ");
-  pnode d = addNode(head);
-  int w;
-  printf("please enter w: ");
-        if (scanf("%d",&w )!=0)
-        {
-            pEdge p = (*src)->edges;
-           
-            insert_edge(&p,d,w);
-            (*src)->edges = p;
-
-        }
-}
-
-
-void removeALLedges(pEdge *head)
-{
-    while(*head)
+    pnode dst= addNode(head);
+    if(dst==NULL)
     {
-        deleteFirst(head);
+        return NULL;
     }
+    int w;
+    if(scanf("%d",&w)==1);
+    pEdge p = (pEdge) malloc(sizeof(edge));
+    p->weight =w;
+    p->next = (*src)->edges;
+    p->dest = dst;
+    (*src)->edges = p;
+    return (*src)->edges;
 }
-
-void deleteFirst(pEdge *head){
-if(!*head) return;
-pEdge p =*head;
-*head = p->next;
-free(p);
-}
-
-void removeEdge(pEdge *prev)
+pedge find_edge(int id, pedge * head)
 {
-    pEdge p = (*prev)->next;
-    (*prev)->next = (*prev)->next->next;
+    if(*head==NULL) {return NULL;}
+    pedge p = *head;
+    while(p){
+        if(p->dest->id ==id)
+        {
+            return p;
+        }
+        p = p->next;
+    }
+    return NULL;
+}
+int wight_edge_byid( int src,int dst, pnode * head)
+{
+    pnode p= find_node(src, *head);
+    if(p->edges==NULL){return -1;}
+    pedge e = find_edge(dst, &(p->edges));
+    if(e!=NULL)
+    {
+        return e->weight;
+    }
+    return -1;
+}
+void delete_first_edge (pedge* head)
+{
+    if(*head!=NULL)
+    {
+        return;
+    }
+    pedge p = *head;
+    *head = p->next;
     free(p);
 }
-
-void removeByid(pEdge * head,int dest)
+void remove_edge (pEdge* prev)
 {
-    if((*head)== NULL)
+    pEdge p = (*prev)->next;
+    (*prev)->next=(*prev)->next->next;
+    free(p);
+}
+void remove_by_id(int dst, pedge * head)
+{
+    if(*head==NULL) {return;}
+    if((*head)->dest->id==dst)
     {
+        delete_first_edge(head);
         return;
     }
-    if((*head)->dest->id == dest)
+    pEdge p =(*head)->next;
+    pedge prev =*head;
+    while(p!=NULL)
     {
-        deleteFirst(head);
-        return;
-    }
-    pEdge prev = *head;
-    pEdge p = (*head)->next;
-    
-    while (p)
-    {
-        if(p->dest->id == dest)
+        if(p->dest->id==dst)
         {
-            removeEdge(&prev);
+            remove_edge(&prev);
         }
         p = p->next;
         prev = prev->next;
-
     }
-    
-
-
-
-
 }
-int findByid(pEdge * head,int dest)
+void remove_all(pEdge * head)
 {
-    if((*head)== NULL)
+    while((*head)!=NULL)
     {
-        return -1;
+        delete_first_edge(head);
     }
-    pEdge p = (*head);
-    
-    while (p)
-    {
-        if(p->dest->id == dest)
-        {
-            return (*head)->weight;
-        }
-        p = p->next;
-    }
-    return -1;
 }
-int findWbySrc(pnode *head,int src,int dest)
+void remove_to_id(pnode * head, int id)
 {
-    pnode ptn= find_node(src, *head);
-    if(ptn !=NULL)
+    pnode p = *head;
+    while(p)
     {
-        pEdge edgeArr = ptn->edges;
-        int w = findByid(&edgeArr,dest);
-        return w;
+        remove_by_id(id, &(p->edges));
+        p =p->next;
     }
-    return -1;
-    
 }

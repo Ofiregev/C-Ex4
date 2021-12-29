@@ -2,7 +2,188 @@
 #include <stdlib.h>
 #include "graph.h"
 #define inf 10000
+#include<stdio.h>
+ pedge add_edge(pnode* head, pnode *src)
+{
+    pnode dst= addNode(head);
+    if(dst==NULL)
+    {
+        return NULL;
+    }
+    int w;
+    if(scanf("%d",&w)==1);
+    pEdge p = (pEdge) malloc(sizeof(edge));
+    p->weight =w;
+    p->next = (*src)->edges;
+    p->dest = dst;
+    (*src)->edges = p;
+    return (*src)->edges;
+}
+pedge find_edge(int id, pedge * head)
+{
+    if(*head==NULL) {return NULL;}
+    pedge p = *head;
+    while(p){
+        if(p->dest->id ==id)
+        {
+            return p;
+        }
+        p = p->next;
+    }
+    return NULL;
+}
+int wight_edge_byid( int src,int dst, pnode * head)
+{
+    pnode p= find_node(src, *head);
+    if(p->edges==NULL){return -1;}
+    pedge e = find_edge(dst, &(p->edges));
+    if(e!=NULL)
+    {
+        return e->weight;
+    }
+    return -1;
+}
+void delete_first_edge (pedge* head)
+{
+    if(*head==NULL)
+    {
+        return;
+    }
+    pedge p = *head;
+    *head = p->next;
+    free(p);
+}
+void remove_edge (pEdge* prev)
+{
+    pEdge p = (*prev)->next;
+    (*prev)->next=(*prev)->next->next;
+    free(p);
+}
+void remove_by_id(int dst, pedge * head)
+{
+    if(*head==NULL) {return;}
+    if((*head)->dest->id==dst)
+    {
+        delete_first_edge(head);
+        return;
+    }
+    pEdge p =(*head)->next;
+    pedge prev =*head;
+    while(p!=NULL)
+    {
+        if(p->dest->id==dst)
+        {
+            remove_edge(&prev);
+        }
+        p = p->next;
+        prev = prev->next;
+    }
+}
+void remove_all(pEdge * head)
+{
+    while((*head)!=NULL)
+    {
+        delete_first_edge(head);
+    }
+}
+void remove_to_id(pnode * head, int id)
+{
+    pnode p = *head;
+    while(p)
+    {
+        remove_by_id(id, &((p)->edges));
+        p =(p)->next;
+    }
+}
 
+void per(pnode* head, p_d_node *e, int cur, int size, int count, int* min)
+{
+    if(size==0)
+    {
+        int res = TSP(head, cur, count);
+        if((*min) > res)
+        {
+            printf("sooo");
+            *min = res;
+        }
+    }
+    p_d_node d = *e;
+    while(d)
+    {
+        if(d->visit==0)
+        {
+            d->visit =1;
+            cur = cur*10 + (d->node_id);
+            per(head, e, cur, size-1, count+1, min);
+        }
+        d->visit =0;
+        d = d->next;
+    }
+}
+int * reversNUm(int curr, int size)
+{
+    int t = curr;
+    printf("%d",t);
+    int sum_of_digit = 0;
+    while(t > 0)
+    {
+        t = t/10;
+        sum_of_digit++;
+    }
+    int * arr = (int *)malloc(sizeof(int)*size);
+    if(size > sum_of_digit)
+    {
+        int w = curr;
+        arr[size -1] =0;
+        for (int i=0;i<size-1;i++)
+        {
+            arr[i] = w%10;
+            w=w/10;
+        }
+        return arr;
+    }else{
+        int w = curr;
+        for (int i=0;i<size;i++)
+        {
+            arr[i] = w%10;
+            w=w/10;
+        }
+        return arr;
+    }
+}
+int TSP(pnode *head, int cur, int count)
+{
+    int sum =0;
+    int *arr = reversNUm(cur,count);
+    for(int i=0; i<count-1;i++)
+    {
+        sum += short_path(head, arr[i], arr[i+1]);
+    }
+    return sum;
+}
+int c_tsp(pnode  head)
+{
+    p_d_node d = NULL;
+    pnode  l=NULL;
+    int size =0;
+    int n;
+    if(scanf("%d", &size));
+    for( int i=0 ; i< size ;i++)
+    {
+        if(scanf("%d", &n));
+        pnode temp = (pnode) malloc(sizeof(node));
+        temp->id = n;
+        temp->edges = find_node(n, head)->edges;
+        temp->next = l;
+        l = temp;
+    }
+
+    make_D(&d, &l);
+    int* res = (int*) malloc(sizeof(int));
+    *res = inf;
+    per(&l, &d, 0, size, 0  ,res);
+    return(*res);
+}
 int countNOdes (pnode* head)//This function count how mant nodes we have in the graph
 {
     pnode p = *head;
@@ -92,7 +273,7 @@ void Dijk (pnode* head, int sr, p_d_node* f)//Dijksra algorithm- find the shorte
         {
             p_d_node temp = find_d_by_id((*f),e->dest->id);
             // find the adress of this struct and check the short path there.
-            if(temp->w > ((e->weight) +  (prev->w)))
+            if(temp->w > ((e)->weight) +  (prev->w))
             {
                 temp->w =((e->weight) +  (prev->w));
             }
@@ -109,9 +290,9 @@ int short_path(pnode* head, int src, int dst)//This function return the shortest
     make_D(&d,head);
     Dijk(head, src, &d);
     int min_w =((find_d_by_id(d, dst))->w);
-    printf("%d",min_w);
-    p_t_f q = free_dn_list;
-    q(d);
+    // printf("%d",min_w);
+    // p_t_f q = free_dn_list;
+    // q(d);
     return min_w;
     
 } 
@@ -128,67 +309,42 @@ pnode find_node(int id, pnode head)//This function find node by id in the graph
     return NULL;
 }
 
-pnode addNOdeB(pnode *head)//We need to check this function
-{
-    int id;
-    printf("please enter node id");
-    if (scanf("%d", &id) == 0)
-    {
-        printf("type integer value");
-        return NULL;
-    }
-    pnode ptn = find_node(id, *head);
-    if (ptn == NULL)
-    {
-        ptn = (pnode)malloc(sizeof(node));
-        if (ptn == NULL)
-        {
-            printf("eroor");
-            return ptn;
-        }
-        ptn->id = id;
-        ptn->next = *head;
-        *head = ptn;
-    }
-    return ptn;
-}
 
 pnode addNode(pnode *head)//This function adding new node to the graph (The new node become the head of the linked list)
 
 // node =Null -> bulid graph ->(keyListener)get(n) -> addNod ->(keyListener) ('n' [addNode],'int' [function addEdge(int,int)])
+// node =Null -> bulid graph ->(keyListener)get(n) -> addNod ->(keyListener) ('n' [addNode],'int' [function addEdge(int,int)])
 {
     int id;
-    printf("please enter node id");
-    if (scanf("%d", &id) == 0)
+    if(scanf("%d",&id)==0)
     {
-        printf("type integer value");
         return NULL;
     }
-    pnode ptn = find_node(id, *head);
-    if (ptn == NULL)
+    pnode ptn= find_node(id, *head);
+    if(ptn==NULL)
     {
-        ptn = (pnode)malloc(sizeof(node));
-        if (ptn == NULL)
+        ptn = (pnode) malloc(sizeof(node));
+        if(ptn==NULL)
         {
             printf("eroor");
             return ptn;
         }
-        ptn->id = id;
+        ptn->id =id;
         ptn->next = *head;
-        *head = ptn;
+        ptn->edges =NULL;
+        *head =  ptn;
     }
     return ptn;
 }
-
-void removeALLNodes(pnode *head)
+void delete_all_node(pnode *head)
 {
     while (*head)
     {
-        deleteFirstNode(head);
+        delete_first_node(head);
     }
 }
 
-void removeNodeByid(pnode *head, int id)//This function delete node by id
+void delete_node_byid(pnode *head, int id)//This function delete node by id
 {
     if ((*head) == NULL)
     {
@@ -196,7 +352,7 @@ void removeNodeByid(pnode *head, int id)//This function delete node by id
     }
     if ((*head)->id == id)
     {
-        deleteFirstNode(head);
+        delete_first_node(head);
         return;
     }
     pnode prev = *head;
@@ -212,7 +368,7 @@ void removeNodeByid(pnode *head, int id)//This function delete node by id
         prev = prev->next;
     }
 }
-void deleteFirstNode(pnode *head)//this function delete the first node in the list and free the memory of the node
+void delete_first_node(pnode *head)//this function delete the first node in the list and free the memory of the node
 {
     if (!*head)
         return;
@@ -225,6 +381,7 @@ void removeNode(pnode *prev)//Thid function remove a regular node (not the first
 {
     pnode p = (*prev)->next;
     (*prev)->next = (*prev)->next->next;
+    //remove_all(p->edges);
     free(p);
 }
 
@@ -244,32 +401,10 @@ void insert_edge(pEdge *head, pnode dest, int w)//This function insert new node 
 
     return;
 }
-void get_edge_place(pnode *head, pnode *src)//This function get the place which we node to insert in edge
-{
-    printf("dest id: ");
-    pnode d = addNode(head);
-    int w;
-    printf("please enter w: ");
-    if (scanf("%d", &w) != 0)
-    {
-        pEdge p = (*src)->edges;
-
-        insert_edge(&p, d, w);
-        (*src)->edges = p;
-    }
-}
-
-void removeALLedges(pEdge *head)
-{
-    while (*head)
-    {
-        deleteFirst(head);
-    }
-}
 
 void deleteFirst(pEdge *head)
 {
-    if (!*head)
+    if (!(*head))
         return;
     pEdge p = *head;
     *head = p->next;
@@ -341,29 +476,73 @@ int findWbySrc(pnode *head, int src, int dest)//This function gets src id and de
     return -1;
 }
 
-void build_graph_cmd(pnode *pn)
-{
-/// pn->id ||(*pn).id || pn =other_pn
-    int w;
-    char x;
-    printf("please enter n:");
-    if (scanf("%c", &x));
-    if (x == 'n')
-    {
 
-        pnode src0 = addNode(pn); //0
-        pnode src1 = addNode(pn); //1
-        pnode src2 = addNode(pn); //2
-        pnode src3 = addNode(pn); //3
-        get_edge(pn, &src0); //1->1
-        get_edge(pn, &src0); //2->1
-        get_edge(pn, &src1); //2->2
-        get_edge(pn, &src2); //3->6
-        get_edge(pn, &src3); //0->5
-        p_d_node d = NULL;
-        make_D(&d,pn);
-        short_path(pn,src0->id,2);
-        p_t_f d = free_dn_list;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/// pn->id ||(*pn).id || pn =other_pn
+    // int w;
+    // char x;
+    // int stam;
+    // scanf("%d",&stam);
+    // printf("please enter n:");
+    // scanf("%c", &x);
+    // while (x == 'n')
+    // {
+    //     pnode src = addNode(pn); 
+
+    //     int d;
+    //     while (scanf("%d ",&d)==1)
+    //     {
+    //         int w;
+    //         scanf("%d",w);
+    //         get_edge_place(pn,src,d,w);
+    //         scanf("%d ",&d);
+    //     }
+    //     while (*pn)
+    //     {
+    //         printf("%d",(*pn)->id);
+    //     }
+        
+        
+       
+        
+
+
+
+
+
+
+
+
+
+    // pnode src0 = addNode(pn); //0
+    // pnode src1 = addNode(pn); //1
+    // pnode src2 = addNode(pn); //2
+    // pnode src3 = addNode(pn); //3
+    // get_edge_place(pn, &src0,1,1); //1->1
+    // get_edge_place(pn, &src0,2,1); //2->1
+    // get_edge_place(pn, &src1,2,2); //2->2
+    // get_edge_place(pn, &src2,3,6); //3->6
+    // get_edge_place(pn, &src3,0,5);
+    // c_tsp(*pn); //0->5
+    //     // p_d_node d = NULL;
+        // make_D(&d,pn);
+        // short_path(pn,src0->id,2);
+        // p_t_f q = free_dn_list;
+        // q(d);
+        // scanf("%c", &x);
         
         // while (*pn)
         // {
@@ -389,20 +568,20 @@ void build_graph_cmd(pnode *pn)
         //     removeALLedges(&(src2->edges));
         // }
 
-        if (pn == NULL)
-        {
-            printf("not good");
-        }
-    }
-}
-typedef void(*p_t_f)(void*);
+        // if (pn == NULL)
+        // {
+        //     printf("not good");
+        // }
+    
+
+
 
 void free_graph(pnode * head)
 {
     pnode  t = *head;
     while (*head)
     {
-        removeALLedges((*head)->edges);
+        remove_all((*head)->edges);
         t = head;
         *head = (*head)->next;
         free(t);
@@ -420,32 +599,138 @@ void free_dn_list(p_d_node * head)
     }
     free(head);
 }
-
-
-
-
+void com_a(pnode * head)
+{
+    if((*head)!=NULL)
+    {
+        free_graph(head);
+    }
+    int size;
+    if(scanf("%d", &size)==1);
+    return;
+}
+char com_n(pnode * head)
+{
+    printf("imsert new block \n");
+    pnode p = addNode(head);
+    remove_all(&(p->edges));
+    char c;
+    int d;
+    int w;
+    do{
+        if(add_edge(head, &p)==NULL)
+        {
+            c = getchar();
+            return c;
+        }
+    } while(1);
+}
+char com_b(pnode * head)
+{
+    return ('n');
+}
+void com_d(pnode *head)
+{
+    pnode p = addNode(head);
+    /// find the adress of this node
+    remove_all(&(p->edges));
+    /// remove all the edges from this node
+    remove_to_id(head, p->id);
+    /// remove edges to this node
+    delete_node_byid(head, p->id);
+    // delete this node after we free each edges/
+}
+void com_s(pnode * head)
+{
+    int src;
+    int dst;
+    if( scanf("%d", &src));
+    if( scanf("%d", &dst));
+    int res = short_path(head, src, dst);
+    printf("%d", res);
+}
+char com_t(pnode * head)
+{
+    int res = c_tsp(head);
+    char c =getchar();
+    printf("%d", res);
+    return c;
+}
+void cmd(pnode * head)
+{
+    char c;
+    int call;
+    int f =1;
+    while(1)
+    {
+        printf("welcome");
+        if(f==1)
+        {
+            if(scanf("%d", &call)!=1)
+        {
+            c = getchar();
+        }
+        }
+        if(c=='A')
+        {
+            f=1;
+            com_a(head);
+            continue;
+        }
+        if(c=='B')
+        {
+            f =0;
+            c= com_b(head);
+            continue;
+        }
+        if(c=='n')
+        {
+            f =0;
+            c = com_n(head);
+            continue;
+        }
+        if(c=='D')
+        {
+            f =1;
+            com_d(head);
+            continue;
+        }
+        if(c=='S')
+        {
+            f =1;
+            com_s(head);
+            continue;
+        }
+        if(c=='T')
+        {
+            f =0;
+            c= com_t(head);
+            continue;
+        }
+        if(c == 'q')
+        {
+            return;
+        }
+    }
+}
 
 int main()
 {
-
-    pnode pn = NULL;
-    build_graph_cmd(&pn);
-    // addNode(&pn);
-    // addNode(&pn);
-    // addNode(&pn);
-    // addNode(&pn);
-    while (pn)
-    {
-        //printf("%d ,", pn->id);
-        //printf("%d", pn->edges->weight);
-        // printf("%d",pn->edges->weight);
-        // pn->edges = pn->edges->next;
-        pn = pn->next;
-    }
-    p_t_f d = free_graph;
-    d(pn);
-    printf("It worked!");
-
-    // printf("%d", pn->next->id);
+    pnode pn =NULL;
+    // pnode s1 = addNode(&pn); //0
+    // pnode s2 = addNode(&pn);  ///1
+    // pnode s3= addNode(&pn);   //2
+    // // pnode s4 = addNode(&pn);   //3
+    // // add_edge(&pn, &s1);
+    // // add_edge(&pn, &s1);
+    // // add_edge(&pn, &s2);
+    // // add_edge(&pn, &s3);
+    // // add_edge(&pn, &s4);
+    // p_d_node d= NULL;
+    // int i=0;
+    // make_D(&d, &pn);
+    // per(&d, 3, 0);
+    cmd(&pn);
+    printf("Done");
     return 0;
 }

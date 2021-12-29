@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "graph.h"
-#define inf  10000
-
-
+#define inf 10000
 int countNOdes (pnode* head)
 {
     pnode p = *head;
@@ -106,7 +104,10 @@ int short_path(pnode* head, int src, int dst)
     make_D(&d,head);
     Dijk(head, src, &d);
     int min_w =((find_d_by_id(d, dst))->w);
-    printf("%d",min_w);
+    if(min_w==inf)
+    {
+        return -1;
+    }
     return min_w;
     free(d);
-} 
+}
