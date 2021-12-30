@@ -300,7 +300,7 @@ void c_tsp(pnode* head)
     int my_id;
     // printf("ENTER SIZE:");
     scanf("%d", &size);
-    int size9;
+    int size9= 0;
     for (int i=0; i<size; i++)
     {
         pnode t = (pnode) malloc(sizeof(node));
@@ -623,7 +623,7 @@ void cmd(pnode * head)
             
             f=1;
             com_a(head,f,flag);
-            flag = 2;
+            flag ++;
             continue;
         }
         if(c=='B')
