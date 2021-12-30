@@ -30,7 +30,7 @@ pnode addNode (pnode *head);
 
 
 pedge add_edge(pnode* head, pnode *src);
-int wight_edge_byid( int src,int dst, pnode * head);
+int weight_edge_byid( int src,int dst, pnode * head);
 pedge find_edge(int id, pedge * head);
 
 
@@ -57,7 +57,7 @@ int countNOdes (pnode* head);
 
 int TSP(pnode *head, int cur, int count);
 // void per(pnode* head, p_d_node *e, int cur, int size, int count, int* min);
-int c_tsp(pnode  head);
+int c_tsp(pnode* head);
 
 
 #endif

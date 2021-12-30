@@ -31,7 +31,7 @@ pedge find_edge(int id, pedge * head)
     }
     return NULL;
 }
-int wight_edge_byid( int src,int dst, pnode * head)
+int weight_edge_byid( int src,int dst, pnode * head)
 {
     pnode p= find_node(src, *head);
     if(p->edges==NULL){return -1;}

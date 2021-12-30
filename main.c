@@ -32,7 +32,7 @@ pedge find_edge(int id, pedge * head)
     }
     return NULL;
 }
-int wight_edge_byid( int src,int dst, pnode * head)
+int weight_edge_byid( int src,int dst, pnode * head)
 {
     pnode p= find_node(src, *head);
     if(p->edges==NULL){return -1;}
@@ -96,95 +96,7 @@ void remove_to_id(pnode * head, int id)
     }
 }
 
-void per(pnode* head, p_d_node *e, int cur, int size, int count, int* min)
-{
-    if(size==0)
-    {
-        int res = TSP(head, cur, count);
-        if((*min) > res)
-        {
-            printf("sooo");
-            *min = res;
-        }
-    }
-    p_d_node d = *e;
-    while(d)
-    {
-        if(d->visit==0)
-        {
-            d->visit =1;
-            cur = cur*10 + (d->node_id);
-            per(head, e, cur, size-1, count+1, min);
-        }
-        d->visit =0;
-        d = d->next;
-    }
-}
-int * reversNUm(int curr, int size)
-{
-    int t = curr;
-    printf("%d",t);
-    int sum_of_digit = 0;
-    while(t > 0)
-    {
-        t = t/10;
-        sum_of_digit++;
-    }
-    int * arr = (int *)malloc(sizeof(int)*size);
-    if(size > sum_of_digit)
-    {
-        int w = curr;
-        arr[size -1] =0;
-        for (int i=0;i<size-1;i++)
-        {
-            arr[i] = w%10;
-            w=w/10;
-        }
-        return arr;
-    }else{
-        int w = curr;
-        for (int i=0;i<size;i++)
-        {
-            arr[i] = w%10;
-            w=w/10;
-        }
-        return arr;
-    }
-}
-int TSP(pnode *head, int cur, int count)
-{
-    int sum =0;
-    int *arr = reversNUm(cur,count);
-    for(int i=0; i<count-1;i++)
-    {
-        sum += short_path(head, arr[i], arr[i+1]);
-    }
-    return sum;
-}
-int c_tsp(pnode  head)
-{
-    p_d_node d = NULL;
-    pnode  l=NULL;
-    int size =0;
-    int n;
-    if(scanf("%d", &size));
-    for( int i=0 ; i< size ;i++)
-    {
-        if(scanf("%d", &n));
-        pnode temp = (pnode) malloc(sizeof(node));
-        temp->id = n;
-        temp->edges = find_node(n, head)->edges;
-        temp->next = l;
-        l = temp;
-    }
-
-    make_D(&d, &l);
-    int* res = (int*) malloc(sizeof(int));
-    *res = inf;
-    per(&l, &d, 0, size, 0  ,res);
-    return(*res);
-}
-int countNOdes (pnode* head)//This function count how mant nodes we have in the graph
+int countNOdes (pnode* head)
 {
     pnode p = *head;
     int count =0;
@@ -195,32 +107,28 @@ int countNOdes (pnode* head)//This function count how mant nodes we have in the 
     }
     return count;
 }
-void add_d(p_d_node * f , pnode p)//This function add new dijkstra node to the list of the algorithm
+void add_d(p_d_node * f , pnode p)
 {
     p_d_node d =(p_d_node) malloc(sizeof(p_d_node));
-        if (d == NULL)
-        {
-            printf("eroor");
-        }
     d->w =inf;
     d->node_id = p->id;
     d->visit =0;
     d->next =(*f);
     (*f) = d;
 }
-void make_D(p_d_node * f , pnode * head)//This function create the list for the dijkstra algorithm
+void make_D(p_d_node * f , pnode * head)
 {
     int count= countNOdes(head);
     pnode p = *head;
     *f = NULL;
     p_d_node d = *f;
-        while (p)
+    while (p)
     {
         add_d(f, p);
         p=p->next;
     }
 }
-p_d_node find_min(p_d_node f)//This function run all over the list of d_node and return the one with the minimum weight
+p_d_node find_min(p_d_node f)
 {
     int min = inf;
     p_d_node adress = NULL;
@@ -239,7 +147,7 @@ p_d_node find_min(p_d_node f)//This function run all over the list of d_node and
     return adress; 
     /// if the adress is Null so we are Done doing Dijkstera.
 }
-p_d_node find_d_by_id(p_d_node f, int id)//This function run on the list of the d_nodes and return the specific node
+p_d_node find_d_by_id(p_d_node f, int id)
 {
     while(f)
     {
@@ -252,7 +160,7 @@ p_d_node find_d_by_id(p_d_node f, int id)//This function run on the list of the 
     return NULL;
 }
 
-void Dijk (pnode* head, int sr, p_d_node* f)//Dijksra algorithm- find the shortests path from a specific node in the graph
+void Dijk (pnode* head, int sr, p_d_node* f)
 {
 
     p_d_node prev =find_d_by_id((*f), sr); 
@@ -273,7 +181,7 @@ void Dijk (pnode* head, int sr, p_d_node* f)//Dijksra algorithm- find the shorte
         {
             p_d_node temp = find_d_by_id((*f),e->dest->id);
             // find the adress of this struct and check the short path there.
-            if(temp->w > ((e)->weight) +  (prev->w))
+            if(temp->w > ((e->weight) +  (prev->w)))
             {
                 temp->w =((e->weight) +  (prev->w));
             }
@@ -284,18 +192,140 @@ void Dijk (pnode* head, int sr, p_d_node* f)//Dijksra algorithm- find the shorte
         /// iteration on the nodes untill we get everyone.
     }
 }
-int short_path(pnode* head, int src, int dst)//This function return the shortest path between two nodes
+int short_path(pnode* head, int src, int dst)
 {
     p_d_node d =NULL;
     make_D(&d,head);
     Dijk(head, src, &d);
     int min_w =((find_d_by_id(d, dst))->w);
-    // printf("%d",min_w);
-    // p_t_f q = free_dn_list;
-    // q(d);
     return min_w;
+    ///// NEED TO DO TOTAL_DELETE TO d;
+    free(d);
+}
+int * reversNUm(int curr, int size)
+{
+    int t = curr;
+    int sum_of_digit = 0;
+    while(t > 0)
+    {
+        t = t/10;
+        sum_of_digit++;
+    }
+    int * arr = (int *)malloc(sizeof(int)*size);
+    /// freeing in the tsp function
+    if(size > sum_of_digit)
+    {
+        int w = curr;
+        arr[size -1] =0;
+        for (int i=0;i<size-1;i++)
+        {
+            arr[i] = w%10;
+            w=w/10;
+        }
+        // for(int i = 0 ;i<size;i++)
+        // {
+        //     printf("%d",arr[i]);
+        // }
+        return arr;
+    }else{
+        int w = curr;
+        for (int i=0;i<size;i++)
+        {
+            arr[i] = w%10;
+            w=w/10;
+        }
+        return arr;
+    }
+}
+int TSP(pnode *head, int cur, int count)
+{
+    int sum =0;
+    int *arr = reversNUm(cur,count);
+    int bdika = 0;
+    printf("per:");
+    for(int i = 0;i<count;i++)
+    {
+        printf("%d",arr[i]);
+    }
     
-} 
+    for(int i=0; i<count-1;i++)
+    {
+        
+        sum += short_path(head, arr[i], arr[i+1]);
+    }
+
+    free(arr);
+    return sum;
+}
+void per (pnode *q,p_d_node * head, int size, int num,int count, int* min)
+{
+    if(size==0)
+    {
+        int res =  (q,num, count);
+        if((*min) > res)
+        {
+            *min = res;
+        }
+    }
+    p_d_node p = *head;
+    while(p)
+    {
+        if(p->visit==0)
+        {
+            p->visit =1;
+            per(q, head, size-1, num*10 + p->node_id,count+1, min);
+            p->visit =0;
+        }
+        p = p->next;
+    }
+}
+void total_remove(pnode * head)
+{
+    pnode p = *head;
+    while(p)
+    {
+        pnode temp = p;
+        p= temp->next;
+        pedge e =temp->edges;
+        while(e)
+        {
+            pedge t = e;
+            e =t->next;
+            free(t);
+        }
+        free(temp);
+    }
+    printf("Done!");
+}
+int c_tsp(pnode* head)
+{
+    int * min = (int*) malloc(sizeof(int));
+    ///freeing at the end of the function
+    *min = inf;
+    int size;
+    p_d_node d = NULL;
+    pnode p =NULL;
+    int my_id;
+    printf("size");
+    if(scanf("%d", &size));
+    for (int i=0; i<size; i++)
+    {
+        printf("for loop");
+        pnode t = (pnode) malloc(sizeof(node));
+        if(scanf("%d", &my_id));
+        pnode f = find_node(my_id, *head);
+        t->id = f->id;
+        t->edges = f->edges;
+        t->next = p;
+        p = t;
+    }
+    make_D(&d, &p);
+    // total_remove(&p);
+    per(head,&d, size, 0, 0,min);
+    /// need to do total_delete to d/
+    printf("This is the tsp answer:%d\n", *min);
+    free(min);
+}
 pnode find_node(int id, pnode head)//This function find node by id in the graph
 {
     while (head != NULL)
@@ -476,106 +506,6 @@ int findWbySrc(pnode *head, int src, int dest)//This function gets src id and de
     return -1;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/// pn->id ||(*pn).id || pn =other_pn
-    // int w;
-    // char x;
-    // int stam;
-    // scanf("%d",&stam);
-    // printf("please enter n:");
-    // scanf("%c", &x);
-    // while (x == 'n')
-    // {
-    //     pnode src = addNode(pn); 
-
-    //     int d;
-    //     while (scanf("%d ",&d)==1)
-    //     {
-    //         int w;
-    //         scanf("%d",w);
-    //         get_edge_place(pn,src,d,w);
-    //         scanf("%d ",&d);
-    //     }
-    //     while (*pn)
-    //     {
-    //         printf("%d",(*pn)->id);
-    //     }
-        
-        
-       
-        
-
-
-
-
-
-
-
-
-
-    // pnode src0 = addNode(pn); //0
-    // pnode src1 = addNode(pn); //1
-    // pnode src2 = addNode(pn); //2
-    // pnode src3 = addNode(pn); //3
-    // get_edge_place(pn, &src0,1,1); //1->1
-    // get_edge_place(pn, &src0,2,1); //2->1
-    // get_edge_place(pn, &src1,2,2); //2->2
-    // get_edge_place(pn, &src2,3,6); //3->6
-    // get_edge_place(pn, &src3,0,5);
-    // c_tsp(*pn); //0->5
-    //     // p_d_node d = NULL;
-        // make_D(&d,pn);
-        // short_path(pn,src0->id,2);
-        // p_t_f q = free_dn_list;
-        // q(d);
-        // scanf("%c", &x);
-        
-        // while (*pn)
-        // {
-        //     printf("%d", (*pn)->id);
-        //     *pn = (*pn)->next;
-        // }
-         //3
-        
-
-      
-
-        // buildMatrix(pn);
-        // createMatrix(pn);
-        // int w = findWbySrc(pn,src1->id,src2->id);
-        // printf("%d\n",w);
-
-        //     pnode p = *pn;
-        //     while (p)
-        //     {
-        //         removeByid(&(p->edges),src2->id);
-        //         p = p->next;
-        //     }
-        //     removeALLedges(&(src2->edges));
-        // }
-
-        // if (pn == NULL)
-        // {
-        //     printf("not good");
-        // }
-    
-
-
-
 void free_graph(pnode * head)
 {
     pnode  t = *head;
@@ -601,17 +531,13 @@ void free_dn_list(p_d_node * head)
 }
 void com_a(pnode * head)
 {
-    if((*head)!=NULL)
-    {
-        free_graph(head);
-    }
     int size;
     if(scanf("%d", &size)==1);
     return;
 }
 char com_n(pnode * head)
 {
-    printf("imsert new block \n");
+    printf("insert new block \n");
     pnode p = addNode(head);
     remove_all(&(p->edges));
     char c;
@@ -647,14 +573,17 @@ void com_s(pnode * head)
     if( scanf("%d", &src));
     if( scanf("%d", &dst));
     int res = short_path(head, src, dst);
-    printf("%d", res);
+    if(res ==inf)
+    {
+        printf("%d", -1);
+    }
+    printf(" shortest path : %d", res);
 }
-char com_t(pnode * head)
+void com_t(pnode * head)
 {
+    char c;
     int res = c_tsp(head);
-    char c =getchar();
     printf("%d", res);
-    return c;
 }
 void cmd(pnode * head)
 {
@@ -703,13 +632,9 @@ void cmd(pnode * head)
         }
         if(c=='T')
         {
-            f =0;
-            c= com_t(head);
+            f =1;
+            com_t(head);
             continue;
-        }
-        if(c == 'q')
-        {
-            return;
         }
     }
 }
@@ -717,6 +642,7 @@ void cmd(pnode * head)
 int main()
 {
     pnode pn =NULL;
+    // reversNUm(123,4);
     // pnode s1 = addNode(&pn); //0
     // pnode s2 = addNode(&pn);  ///1
     // pnode s3= addNode(&pn);   //2
