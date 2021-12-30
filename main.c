@@ -3,6 +3,7 @@
 #include "graph.h"
 #define inf 10000
 #include<stdio.h>
+
  pedge add_edge(pnode* head, pnode *src)
 {
     pnode dst= addNode(head);
@@ -222,10 +223,6 @@ int * reversNUm(int curr, int size)
             arr[i] = w%10;
             w=w/10;
         }
-        // for(int i = 0 ;i<size;i++)
-        // {
-        //     printf("%d",arr[i]);
-        // }
         return arr;
     }else{
         int w = curr;
@@ -241,27 +238,22 @@ int TSP(pnode *head, int cur, int count)
 {
     int sum =0;
     int *arr = reversNUm(cur,count);
-    int bdika = 0;
-    printf("per:");
-    for(int i = 0;i<count;i++)
-    {
-        printf("%d",arr[i]);
-    }
-    
+    // printf("per :");
     for(int i=0; i<count-1;i++)
     {
         
         sum += short_path(head, arr[i], arr[i+1]);
     }
-
+    // printf("%d",sum);
     free(arr);
     return sum;
 }
 void per (pnode *q,p_d_node * head, int size, int num,int count, int* min)
 {
+    
     if(size==0)
     {
-        int res =  (q,num, count);
+        int res = TSP(q,num, count);
         if((*min) > res)
         {
             *min = res;
@@ -297,7 +289,7 @@ void total_remove(pnode * head)
     }
     printf("Done!");
 }
-int c_tsp(pnode* head)
+void c_tsp(pnode* head)
 {
     int * min = (int*) malloc(sizeof(int));
     ///freeing at the end of the function
@@ -306,24 +298,35 @@ int c_tsp(pnode* head)
     p_d_node d = NULL;
     pnode p =NULL;
     int my_id;
-    printf("size");
-    if(scanf("%d", &size));
+    // printf("ENTER SIZE:");
+    scanf("%d", &size);
+    int size9;
     for (int i=0; i<size; i++)
     {
-        printf("for loop");
         pnode t = (pnode) malloc(sizeof(node));
         if(scanf("%d", &my_id));
         pnode f = find_node(my_id, *head);
+        if(f == NULL)
+        {
+            continue;
+        }
         t->id = f->id;
         t->edges = f->edges;
         t->next = p;
         p = t;
+        size9++;
     }
     make_D(&d, &p);
     // total_remove(&p);
-    per(head,&d, size, 0, 0,min);
+    per(head,&d, size9, 0, 0,min);
+    
     /// need to do total_delete to d/
-    printf("This is the tsp answer:%d\n", *min);
+    if((*min) == inf)
+    {
+        *min = -1;
+
+    }
+    printf("TSP shortest path: %d\n", *min);
     free(min);
 }
 pnode find_node(int id, pnode head)//This function find node by id in the graph
@@ -392,7 +395,7 @@ void delete_node_byid(pnode *head, int id)//This function delete node by id
     {
         if (p->id == id)
         {
-            removeNode(&prev);
+            delete_node(&prev);
         }
         p = p->next;
         prev = prev->next;
@@ -407,14 +410,12 @@ void delete_first_node(pnode *head)//this function delete the first node in the 
     free(p);
 }
 
-void removeNode(pnode *prev)//Thid function remove a regular node (not the first)
+void delete_node(pnode* prev)
 {
     pnode p = (*prev)->next;
     (*prev)->next = (*prev)->next->next;
-    //remove_all(p->edges);
     free(p);
 }
-
 void insert_edge(pEdge *head, pnode dest, int w)//This function insert new node to the linked list
 {
     pEdge pte;
@@ -511,35 +512,42 @@ void free_graph(pnode * head)
     pnode  t = *head;
     while (*head)
     {
-        remove_all((*head)->edges);
-        t = head;
+        remove_all(&((*head)->edges));
+        t = *head;
         *head = (*head)->next;
         free(t);
     }
-    free(head);
+    free(*head);
 }
 void free_dn_list(p_d_node * head)
 {
     p_d_node  t = *head;
     while (*head)
     {
-        t = head;
+        t = *head;
         *head = (*head)->next;
         free(t);
     }
     free(head);
 }
-void com_a(pnode * head)
+void com_a(pnode * head,int flag,int newflag)
 {
+    if(flag!=newflag)
+    {
+        free_graph(head);
+    }
     int size;
-    if(scanf("%d", &size)==1);
+    size = scanf("%d", &size);
     return;
 }
 char com_n(pnode * head)
 {
-    printf("insert new block \n");
+    // printf("insert new block \n");
     pnode p = addNode(head);
-    remove_all(&(p->edges));
+    if(p != NULL)
+    {// remove_all(&(p->edges));
+         remove_all(&(p->edges));
+    }
     char c;
     int d;
     int w;
@@ -552,8 +560,18 @@ char com_n(pnode * head)
     } while(1);
 }
 char com_b(pnode * head)
+// printf("insert new block \n");
 {
-    return ('n');
+    pnode p = addNode(head);
+    remove_all(&(p->edges));
+    char c;
+    do{
+        if(add_edge(head, &p)==NULL)
+        {
+            c = getchar();
+            return c;
+        }
+    } while(1);
 }
 void com_d(pnode *head)
 {
@@ -565,6 +583,7 @@ void com_d(pnode *head)
     /// remove edges to this node
     delete_node_byid(head, p->id);
     // delete this node after we free each edges/
+    // printf("DONE");
 }
 void com_s(pnode * head)
 {
@@ -577,22 +596,21 @@ void com_s(pnode * head)
     {
         printf("%d", -1);
     }
-    printf(" shortest path : %d", res);
+    printf("Dijsktra shortest path: %d", res);
 }
 void com_t(pnode * head)
 {
-    char c;
-    int res = c_tsp(head);
-    printf("%d", res);
+    c_tsp(head);
 }
 void cmd(pnode * head)
 {
     char c;
     int call;
     int f =1;
+    int flag = 1;
     while(1)
     {
-        printf("welcome");
+        // printf("welcome");
         if(f==1)
         {
             if(scanf("%d", &call)!=1)
@@ -602,8 +620,10 @@ void cmd(pnode * head)
         }
         if(c=='A')
         {
+            
             f=1;
-            com_a(head);
+            com_a(head,f,flag);
+            flag = 2;
             continue;
         }
         if(c=='B')
@@ -620,7 +640,7 @@ void cmd(pnode * head)
         }
         if(c=='D')
         {
-            f =1;
+            f = 1;
             com_d(head);
             continue;
         }
@@ -632,7 +652,7 @@ void cmd(pnode * head)
         }
         if(c=='T')
         {
-            f =1;
+            f = 1;
             com_t(head);
             continue;
         }
@@ -657,6 +677,6 @@ int main()
     // make_D(&d, &pn);
     // per(&d, 3, 0);
     cmd(&pn);
-    printf("Done");
+    // printf("Done");
     return 0;
 }
