@@ -104,7 +104,7 @@ void cmd(pnode * head)
     int call;
     int f =1;
     int flag = 1;
-    while(1)
+    while(!EOF)
     {
         // printf("welcome");
         if(f==1)
