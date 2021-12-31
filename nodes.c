@@ -3,11 +3,11 @@
 #include "graph.h"
 
 
-pnode find_node(int id, pnode head)
+pnode find_node(int id, pnode head)//This function find node by id in the graph
 {
-    while(head!=NULL)
+    while (head != NULL)
     {
-        if(head->id==id)
+        if (head->id == id)
         {
             return head;
         }
@@ -16,42 +16,15 @@ pnode find_node(int id, pnode head)
     return NULL;
 }
 
-pnode addNOdeB (pnode *head)
-{
-int id;
-    printf("please enter node id");
-    if(scanf("%d",&id)==0)
-    {
-        printf("type integer value");
-        return NULL;
-    }
-    pnode ptn= find_node(id, *head);
-    if(ptn==NULL)
-    {
-        ptn = (pnode) malloc(sizeof(node));
-        if(ptn==NULL)
-        {
-            printf("eroor");
-            return ptn;
-        }
-        ptn->id =id;
-        ptn->next = *head;
-        *head =  ptn;
-    }
-    return ptn;
-}
 
+pnode addNode(pnode *head)//This function adding new node to the graph (The new node become the head of the linked list)
 
-
-pnode addNode (pnode *head)
-
+// node =Null -> bulid graph ->(keyListener)get(n) -> addNod ->(keyListener) ('n' [addNode],'int' [function addEdge(int,int)])
 // node =Null -> bulid graph ->(keyListener)get(n) -> addNod ->(keyListener) ('n' [addNode],'int' [function addEdge(int,int)])
 {
     int id;
-    printf("please enter node id");
     if(scanf("%d",&id)==0)
     {
-        printf("type integer value");
         return NULL;
     }
     pnode ptn= find_node(id, *head);
@@ -65,56 +38,55 @@ pnode addNode (pnode *head)
         }
         ptn->id =id;
         ptn->next = *head;
+        ptn->edges =NULL;
         *head =  ptn;
     }
     return ptn;
 }
-
-void removeALLNodes(pnode *head)
+void delete_all_node(pnode *head)
 {
-    while(*head)
+    while (*head)
     {
-        deleteFirstNode(head);
+        delete_first_node(head);
     }
 }
 
-void removeNodeByid(pnode * head,int id)
+void delete_node_byid(pnode *head, int id)//This function delete node by id
 {
-    if((*head)== NULL)
+    if ((*head) == NULL)
     {
         return;
     }
-    if((*head)->id == id)
+    if ((*head)->id == id)
     {
-        deleteFirstNode(head);
+        delete_first_node(head);
         return;
     }
     pnode prev = *head;
     pnode p = (*head)->next;
-    
+
     while (p)
     {
-        if(p->id == id)
+        if (p->id == id)
         {
-            removeNode(&prev);
+            delete_node(&prev);
         }
         p = p->next;
         prev = prev->next;
-
     }
-
 }
-void deleteFirstNode(pnode *head){
-if(!*head) return;
-pnode p =*head;
-*head = p->next;
-free(p);
+void delete_first_node(pnode *head)//this function delete the first node in the list and free the memory of the node
+{
+    if (!*head)
+        return;
+    pnode p = *head;
+    *head = p->next;
+    free(p);
 }
 
-void removeNode(pnode *prev)
+void delete_node(pnode* prev)
 {
     pnode p = (*prev)->next;
     (*prev)->next = (*prev)->next->next;
     free(p);
 }
-
