@@ -192,7 +192,7 @@ void total_remove(pnode * head)
         }
         free(temp);
     }
-    printf("Done!");
+    // printf("Done!");
 }
 void c_tsp(pnode* head)
 {
