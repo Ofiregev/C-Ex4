@@ -1,2 +1,2 @@
-TSP shortest path: 6
-Dijsktra shortest path: 3
+TSP shortest path: 6 
+Dijsktra shortest path: 3 

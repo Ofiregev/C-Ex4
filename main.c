@@ -92,7 +92,7 @@ void com_s(pnode * head)
     // {
     //     printf("%d", -1);
     // }
-    printf("Dijsktra shortest path: %d\n", res);
+    printf("Dijsktra shortest path: %d \n", res);
 }
 void com_t(pnode * head)
 {
