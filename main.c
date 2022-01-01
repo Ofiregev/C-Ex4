@@ -104,15 +104,19 @@ void cmd(pnode * head)
     int call;
     int f =1;
     int flag = 1;
-    while(1)
+    int run = 1;
+    while(run)
     {
+        
         // printf("welcome");
         if(f==1)
         {
-            if(scanf("%d", &call)!=1)
+            if(scanf("%d", &c)==EOF)
         {
-            c = getchar();
+            run=0;
+            // c = getchar();
         }
+        
         }
         if(c=='A')
         {
@@ -159,5 +163,6 @@ int main()
 {
     pnode pn =NULL;
     cmd(&pn);
+    // printf("dine");
     return 0;
 }
