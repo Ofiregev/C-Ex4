@@ -114,7 +114,7 @@ void cmd(pnode * head)
             if(scanf("%d", &c)==EOF)
         {
             run=0;
-            // c = getchar();
+            // c = getchar()...;
         }
         
         }
