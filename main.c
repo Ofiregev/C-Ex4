@@ -88,11 +88,11 @@ void com_s(pnode * head)
     if( scanf("%d", &src));
     if( scanf("%d", &dst));
     int res = short_path(head, src, dst);
-    if(res ==inf)
-    {
-        printf("%d", -1);
-    }
-    printf("Dijsktra shortest path: %d", res);
+    // if(res ==inf)
+    // {
+    //     printf("%d", -1);
+    // }
+    printf("Dijsktra shortest path: %d\n", res);
 }
 void com_t(pnode * head)
 {
@@ -101,22 +101,18 @@ void com_t(pnode * head)
 void cmd(pnode * head)
 {
     char c;
-    int call;
     int f =1;
     int flag = 1;
-    int run = 1;
+    int run =1;
     while(run)
     {
-        
         // printf("welcome");
         if(f==1)
         {
-            if(scanf("%d", &c)==EOF)
+        if(scanf("%c", &c)==EOF)
         {
-            run=0;
-            // c = getchar()...;
+            run =0;
         }
-        
         }
         if(c=='A')
         {
@@ -129,7 +125,7 @@ void cmd(pnode * head)
         if(c=='B')
         {
             f =0;
-            c= com_b(head);
+            c = com_b(head);
             continue;
         }
         if(c=='n')
@@ -163,6 +159,6 @@ int main()
 {
     pnode pn =NULL;
     cmd(&pn);
-    // printf("dine");
+    free_graph(&pn);
     return 0;
 }
